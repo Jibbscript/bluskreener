@@ -1,0 +1,200 @@
+{
+    "nvlddmkm.sys": {
+        "VendorName": "NVIDIA Corporation",
+        "DriverType": "Display Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["456.71", "460.89"],
+                "IssueDescription": "May cause SYSTEM_THREAD_EXCEPTION_NOT_HANDLED (0x7E) when entering sleep mode",
+                "Resolution": "Update to version 461.09 or later",
+                "AffectedOS": ["Windows 10", "Windows 11"]
+            },
+            {
+                "VersionRange": ["471.11", "471.41"],
+                "IssueDescription": "Can trigger VIDEO_TDR_FAILURE (0x116) with certain applications",
+                "Resolution": "Update to version 472.12 or later",
+                "AffectedOS": ["Windows 11"]
+            },
+            {
+                "VersionRange": ["516.94", "517.48"],
+                "IssueDescription": "May cause PAGE_FAULT_IN_NONPAGED_AREA (0x50) with hardware acceleration enabled",
+                "Resolution": "Update to version 518.00 or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "iastor.sys": {
+        "VendorName": "Intel Corporation",
+        "DriverType": "Storage Controller Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["11.2.0.1006", "11.2.0.1032"],
+                "IssueDescription": "Can cause KERNEL_DATA_INPAGE_ERROR (0x7A) when using NVMe storage",
+                "Resolution": "Update to Intel Rapid Storage Technology version 11.2.0.1033 or later",
+                "AffectedOS": ["Windows 10", "Windows 11"]
+            },
+            {
+                "VersionRange": ["18.36.0.1020", "18.36.0.1030"],
+                "IssueDescription": "May trigger DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1) during heavy I/O operations",
+                "Resolution": "Update to version 18.36.0.1031 or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "rtkvhd64.sys": {
+        "VendorName": "Realtek Semiconductor Corp.",
+        "DriverType": "Audio Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["6.0.9107.1", "6.0.9107.5"],
+                "IssueDescription": "May cause DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1) on wake from sleep",
+                "Resolution": "Update to version 6.0.9107.6 or later",
+                "AffectedOS": ["Windows 11"]
+            },
+            {
+                "VersionRange": ["6.0.9355.1", "6.0.9371.1"],
+                "IssueDescription": "Can cause SYSTEM_SERVICE_EXCEPTION (0x3B) when using certain audio applications",
+                "Resolution": "Update to version 6.0.9373.1 or later",
+                "AffectedOS": ["Windows 10", "Windows 11"]
+            }
+        ]
+    },
+    "atikmpag.sys": {
+        "VendorName": "AMD Inc.",
+        "DriverType": "Display Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["27.20.21001.14001", "27.20.21003.8013"],
+                "IssueDescription": "Can trigger VIDEO_TDR_FAILURE (0x116) with power state transitions",
+                "Resolution": "Update to Adrenalin version 21.3.1 or later",
+                "AffectedOS": ["Windows 10", "Windows 11"]
+            },
+            {
+                "VersionRange": ["30.0.13023.1012", "30.0.13023.4001"],
+                "IssueDescription": "May cause KMODE_EXCEPTION_NOT_HANDLED (0x1E) with certain DirectX 12 games",
+                "Resolution": "Update to Adrenalin version 30.0.14011.3001 or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "asmtxhci.sys": {
+        "VendorName": "ASMedia Technology Inc.",
+        "DriverType": "USB Controller Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["1.16.51.1", "1.16.55.1"],
+                "IssueDescription": "Can cause SYSTEM_SERVICE_EXCEPTION (0x3B) when transferring large files",
+                "Resolution": "Update to version 1.16.56.1 or later or use Microsoft inbox driver",
+                "AffectedOS": ["Windows 10", "Windows 11"]
+            }
+        ]
+    },
+    "intelppm.sys": {
+        "VendorName": "Microsoft Corporation (Intel driver)",
+        "DriverType": "Processor Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.19041.662", "10.0.19041.802"],
+                "IssueDescription": "May cause CLOCK_WATCHDOG_TIMEOUT (0x101) on certain Intel CPUs",
+                "Resolution": "Install latest Windows updates or update processor microcode via BIOS update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "storport.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "Storage Port Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.120"],
+                "IssueDescription": "May cause KERNEL_DATA_INPAGE_ERROR (0x7A) with certain NVMe SSDs under heavy load",
+                "Resolution": "Install Windows 11 22H2 update (build 22621) or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "tcpip.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "Network Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.65"],
+                "IssueDescription": "Can cause SYSTEM_THREAD_EXCEPTION_NOT_HANDLED (0x7E) with certain VPN connections",
+                "Resolution": "Install KB5006674 or later cumulative update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "dxgkrnl.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "DirectX Graphics Kernel",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.348"],
+                "IssueDescription": "May trigger VIDEO_TDR_FAILURE (0x116) with mixed GPU configurations",
+                "Resolution": "Install KB5010414 or later update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "Wdf01000.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "Windows Driver Framework",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.194"],
+                "IssueDescription": "Can cause SYSTEM_SERVICE_EXCEPTION (0x3B) with certain USB 3.0 devices",
+                "Resolution": "Install KB5007262 or later cumulative update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "igdkmd64.sys": {
+        "VendorName": "Intel Corporation",
+        "DriverType": "Display Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["30.0.100.9955", "30.0.100.9864"],
+                "IssueDescription": "May cause PAGE_FAULT_IN_NONPAGED_AREA (0x50) with hardware acceleration in browsers",
+                "Resolution": "Update to version 30.0.101.1191 or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "ndis.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "Network Driver Interface",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.282"],
+                "IssueDescription": "May trigger DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1) with certain network adapters",
+                "Resolution": "Install KB5007262 or later cumulative update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "cng.sys": {
+        "VendorName": "Microsoft Corporation",
+        "DriverType": "Cryptography Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["10.0.22000.1", "10.0.22000.653"],
+                "IssueDescription": "Can cause KMODE_EXCEPTION_NOT_HANDLED (0x1E) during encryption operations",
+                "Resolution": "Install KB5014019 or later update",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    },
+    "rtwlane.sys": {
+        "VendorName": "Realtek Semiconductor Corp.",
+        "DriverType": "Network Adapter Driver",
+        "KnownIssues": [
+            {
+                "VersionRange": ["2024.2.219.2", "2024.5.1015.2"],
+                "IssueDescription": "May cause DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1) during power state changes",
+                "Resolution": "Update to version 2024.7.1128.0 or later",
+                "AffectedOS": ["Windows 11"]
+            }
+        ]
+    }
+}

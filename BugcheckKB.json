@@ -1,0 +1,242 @@
+{
+    "0x0000001E": {
+        "Name": "KMODE_EXCEPTION_NOT_HANDLED",
+        "Description": "A kernel-mode program generated an exception which the error handler did not catch.",
+        "CommonCauses": [
+            "Faulty device driver",
+            "System service",
+            "NTFS corruption",
+            "Faulty hardware (especially memory-related)"
+        ],
+        "Recommendations": [
+            "Check for recent driver updates or rollbacks",
+            "Run hardware diagnostics, especially memory test",
+            "Check system file integrity with SFC /scannow",
+            "Run chkdsk to verify disk integrity"
+        ]
+    },
+    "0x0000007E": {
+        "Name": "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED",
+        "Description": "A system thread generated an exception that the error handler did not catch.",
+        "CommonCauses": [
+            "Faulty device driver",
+            "Defective hardware (RAM, motherboard, etc.)",
+            "Overclocking",
+            "System file corruption"
+        ],
+        "Recommendations": [
+            "Update drivers, especially graphics, storage, and network drivers",
+            "Reset overclocking to factory settings if applicable",
+            "Check for hardware issues with diagnostic tools",
+            "Restore system to earlier restore point"
+        ]
+    },
+    "0x00000050": {
+        "Name": "PAGE_FAULT_IN_NONPAGED_AREA",
+        "Description": "Memory corruption in the nonpaged area of memory, often indicating hardware issues.",
+        "CommonCauses": [
+            "Faulty RAM modules",
+            "Incompatible device drivers",
+            "System service that has corrupted the memory",
+            "Improperly seated hardware"
+        ],
+        "Recommendations": [
+            "Run a memory diagnostic like Windows Memory Diagnostic or Memtest86+",
+            "Update BIOS and device drivers",
+            "Check for proper seating of hardware components",
+            "Disable any recently installed third-party services"
+        ]
+    },
+    "0x00000116": {
+        "Name": "VIDEO_TDR_FAILURE",
+        "Description": "The display driver failed to respond in a timely fashion. Usually occurs when the GPU hangs.",
+        "CommonCauses": [
+            "Graphics driver crash",
+            "GPU overheating",
+            "Unstable GPU overclock",
+            "Failing GPU hardware"
+        ],
+        "Recommendations": [
+            "Update graphics drivers to the latest version",
+            "Check GPU temperature under load",
+            "Disable GPU overclocking",
+            "Test with a different graphics card if possible"
+        ]
+    },
+    "0x0000009C": {
+        "Name": "MACHINE_CHECK_EXCEPTION",
+        "Description": "Hardware reported a fatal error to the CPU, usually indicating CPU, memory or power issues.",
+        "CommonCauses": [
+            "Processor error (CPU failure)",
+            "Memory error (bad RAM)",
+            "Motherboard or power supply issues",
+            "Overclocking"
+        ],
+        "Recommendations": [
+            "Check system temperatures and cooling",
+            "Reset BIOS settings to default or disable overclocking",
+            "Run memory diagnostics",
+            "Update BIOS to latest version"
+        ]
+    },
+    "0x00000101": {
+        "Name": "CLOCK_WATCHDOG_TIMEOUT",
+        "Description": "A processor thread failed to respond to a clock interrupt within the expected time.",
+        "CommonCauses": [
+            "CPU overheating",
+            "Unstable CPU overclock",
+            "Power delivery issues",
+            "CPU hardware failure"
+        ],
+        "Recommendations": [
+            "Verify CPU cooling is adequate and fans are working properly",
+            "Remove any CPU overclocking and return to stock settings",
+            "Check the power supply for stability issues",
+            "Update BIOS to latest version"
+        ]
+    },
+    "0x00000124": {
+        "Name": "WHEA_UNCORRECTABLE_ERROR",
+        "Description": "A fatal hardware error occurred that the Windows Hardware Error Architecture reported.",
+        "CommonCauses": [
+            "CPU hardware failure",
+            "Memory errors",
+            "System bus errors",
+            "Unstable overclocking"
+        ],
+        "Recommendations": [
+            "Return all hardware to stock/default settings",
+            "Update BIOS/firmware to latest version",
+            "Run a memory diagnostic tool to check RAM",
+            "Monitor CPU and system temperatures"
+        ]
+    },
+    "0x0000003B": {
+        "Name": "SYSTEM_SERVICE_EXCEPTION",
+        "Description": "An exception happened in a system service, often related to drivers or system files.",
+        "CommonCauses": [
+            "Corrupt system files",
+            "Faulty device drivers",
+            "Third-party system utilities with kernel-mode components",
+            "Some types of malware"
+        ],
+        "Recommendations": [
+            "Update all drivers, especially recently updated ones",
+            "Run System File Checker (sfc /scannow)",
+            "Run DISM tool to repair Windows image",
+            "Scan for malware with updated antivirus software"
+        ]
+    },
+    "0x0000000A": {
+        "Name": "IRQL_NOT_LESS_OR_EQUAL",
+        "Description": "A kernel-mode process or driver attempted to access a memory address it shouldn't have at the current IRQL.",
+        "CommonCauses": [
+            "Faulty device drivers",
+            "Incompatible system services",
+            "Memory hardware issues",
+            "Malware infections"
+        ],
+        "Recommendations": [
+            "Update drivers, especially recently updated ones",
+            "Run memory diagnostics tests",
+            "Check for malware with updated antivirus software",
+            "Disable recently installed software or drivers"
+        ]
+    },
+    "0x000000D1": {
+        "Name": "DRIVER_IRQL_NOT_LESS_OR_EQUAL",
+        "Description": "A driver tried to access an address while at an IRQL that was too high.",
+        "CommonCauses": [
+            "Corrupt or incompatible device drivers",
+            "Memory hardware problems",
+            "Buggy system services or drivers",
+            "Antivirus software conflicts"
+        ],
+        "Recommendations": [
+            "Update the driver mentioned in the stop code parameters",
+            "Check for memory hardware problems with diagnostics",
+            "Disable recently installed software or services",
+            "Boot in Safe Mode to isolate the problem"
+        ]
+    },
+    "0x0000007A": {
+        "Name": "KERNEL_DATA_INPAGE_ERROR",
+        "Description": "Windows cannot read data from the disk into memory. Usually disk or memory related.",
+        "CommonCauses": [
+            "Bad blocks on hard disk",
+            "Failing storage controller",
+            "Loose or damaged SATA/disk cables",
+            "Failing RAM"
+        ],
+        "Recommendations": [
+            "Run chkdsk to check for disk errors",
+            "Check physical disk connections",
+            "Test memory with Windows Memory Diagnostic or memtest86",
+            "Update storage controller drivers"
+        ]
+    },
+    "0x0000001A": {
+        "Name": "MEMORY_MANAGEMENT",
+        "Description": "A severe memory management error occurred in the Windows kernel.",
+        "CommonCauses": [
+            "Faulty RAM modules",
+            "Incompatible memory timing settings in BIOS",
+            "Third-party memory management software",
+            "Corrupt system files related to memory management"
+        ],
+        "Recommendations": [
+            "Run a comprehensive memory diagnostic tool",
+            "Remove overclock settings on RAM in BIOS",
+            "Update BIOS to latest version",
+            "Reseat RAM modules or try different memory slots"
+        ]
+    },
+    "0x000000C5": {
+        "Name": "DRIVER_CORRUPTED_EXPOOL",
+        "Description": "A driver has corrupted a disabled executive pool, often indicating a serious driver bug.",
+        "CommonCauses": [
+            "Faulty device drivers",
+            "Memory corruption due to hardware issues",
+            "Incompatible driver versions",
+            "System file corruption"
+        ],
+        "Recommendations": [
+            "Update all drivers, especially third-party ones",
+            "Check for hardware-related problems, particularly RAM",
+            "Run System File Checker (sfc /scannow)",
+            "Test with a single memory module if multiple are installed"
+        ]
+    },
+    "0x0000000F": {
+        "Name": "SPIN_LOCK_NOT_RELEASED",
+        "Description": "A kernel-mode process failed to release a spin lock, usually due to a driver issue.",
+        "CommonCauses": [
+            "Faulty device drivers",
+            "Processor issues",
+            "Hardware problems",
+            "Multiple driver conflicts"
+        ],
+        "Recommendations": [
+            "Update drivers, especially for storage and network devices",
+            "Update BIOS/firmware to latest version",
+            "Check for hardware issues, especially CPU cooling",
+            "Disable any third-party filter drivers or utilities"
+        ]
+    },
+    "0x00000019": {
+        "Name": "BAD_POOL_HEADER",
+        "Description": "Memory pool header is corrupt, often caused by driver issues or memory corruption.",
+        "CommonCauses": [
+            "Incompatible or buggy device drivers",
+            "System service problems",
+            "Memory hardware issues",
+            "Antivirus software conflicts"
+        ],
+        "Recommendations": [
+            "Update or rollback recently updated drivers",
+            "Run memory diagnostics",
+            "Temporarily disable antivirus software to test",
+            "Run System File Checker (sfc /scannow)"
+        ]
+    }
+}
