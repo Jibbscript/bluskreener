@@ -38,19 +38,21 @@ function Initialize-Environment {
     }
     
     # Check if the Debugging Tools for Windows are installed
-    $winDbgPath = "C:\Program Files (x86)\Windows Kits\10\Debuggers\arm64" 
+    $debugToolsPath = "C:\Program Files (x86)\Windows Kits\10\Debuggers\arm64" 
     
-    if ($null -eq $winDbgPath) {
+    if ($null -eq $debugToolsPath) {
         Write-Warning "Windows Debugging Tools not found. Some functionality may be limited."
         $global:DebuggerAvailable = $false
-    } else {
-        $debuggerPath = Join-Path -Path $winDbgPath -ChildPath "windbg.exe"
-        if (Test-Path $debuggerPath) {
-            $global:DebuggerPath = $debuggerPath
+    }
+    else {
+        $dumpchkPath = Join-Path -Path $debugToolsPath -ChildPath "dumpchk.exe"
+        if (Test-Path $dumpchkPath) {
+            $global:DumpChkPath = $dumpchkPath
             $global:DebuggerAvailable = $true
-            Write-Host "Windows Debugger found at: $debuggerPath" -ForegroundColor Green
-        } else {
-            Write-Warning "Windows Debugger (windbg.exe) not found at expected location. Some functionality may be limited."
+            Write-Host "DumpChk found at: $dumpchkPath" -ForegroundColor Green
+        }
+        else {
+            Write-Warning "DumpChk (dumpchk.exe) not found at expected location. Some functionality may be limited."
             $global:DebuggerAvailable = $false
         }
     }
@@ -59,7 +61,8 @@ function Initialize-Environment {
     if (-not (Test-Path -Path $KnowledgeBasePath)) {
         Write-Host "Bugcheck knowledge base not found. Creating sample knowledge base..." -ForegroundColor Yellow
         Initialize-BugcheckKnowledgeBase
-    } else {
+    }
+    else {
         Write-Host "Loading existing bugcheck knowledge base..." -ForegroundColor Green
         $global:BugcheckKB = Get-Content -Path $KnowledgeBasePath -Raw | ConvertFrom-Json
     }
@@ -68,7 +71,8 @@ function Initialize-Environment {
     if (-not (Test-Path -Path $DriversDBPath)) {
         Write-Host "Known bad drivers database not found. Creating sample database..." -ForegroundColor Yellow
         Initialize-DriversDatabase
-    } else {
+    }
+    else {
         Write-Host "Loading existing drivers database..." -ForegroundColor Green
         $global:DriversDB = Get-Content -Path $DriversDBPath -Raw | ConvertFrom-Json
     }
@@ -81,9 +85,9 @@ function Initialize-BugcheckKnowledgeBase {
     
     $bugcheckData = @{
         "0x0000001E" = @{
-            "Name" = "KMODE_EXCEPTION_NOT_HANDLED"
-            "Description" = "A kernel-mode program generated an exception which the error handler did not catch."
-            "CommonCauses" = @(
+            "Name"            = "KMODE_EXCEPTION_NOT_HANDLED"
+            "Description"     = "A kernel-mode program generated an exception which the error handler did not catch."
+            "CommonCauses"    = @(
                 "Faulty device driver"
                 "System service"
                 "NTFS corruption"
@@ -97,9 +101,9 @@ function Initialize-BugcheckKnowledgeBase {
             )
         }
         "0x0000007E" = @{
-            "Name" = "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED"
-            "Description" = "A system thread generated an exception that the error handler did not catch."
-            "CommonCauses" = @(
+            "Name"            = "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED"
+            "Description"     = "A system thread generated an exception that the error handler did not catch."
+            "CommonCauses"    = @(
                 "Faulty device driver"
                 "Defective hardware (RAM, motherboard, etc.)"
                 "Overclocking"
@@ -113,9 +117,9 @@ function Initialize-BugcheckKnowledgeBase {
             )
         }
         "0x00000050" = @{
-            "Name" = "PAGE_FAULT_IN_NONPAGED_AREA"
-            "Description" = "Memory corruption in the nonpaged area of memory, often indicating hardware issues."
-            "CommonCauses" = @(
+            "Name"            = "PAGE_FAULT_IN_NONPAGED_AREA"
+            "Description"     = "Memory corruption in the nonpaged area of memory, often indicating hardware issues."
+            "CommonCauses"    = @(
                 "Faulty RAM modules"
                 "Incompatible device drivers"
                 "System service that has corrupted the memory"
@@ -129,9 +133,9 @@ function Initialize-BugcheckKnowledgeBase {
             )
         }
         "0x00000116" = @{
-            "Name" = "VIDEO_TDR_FAILURE"
-            "Description" = "The display driver failed to respond in a timely fashion. Usually occurs when the GPU hangs."
-            "CommonCauses" = @(
+            "Name"            = "VIDEO_TDR_FAILURE"
+            "Description"     = "The display driver failed to respond in a timely fashion. Usually occurs when the GPU hangs."
+            "CommonCauses"    = @(
                 "Graphics driver crash"
                 "GPU overheating"
                 "Unstable GPU overclock"
@@ -145,9 +149,9 @@ function Initialize-BugcheckKnowledgeBase {
             )
         }
         "0x0000009C" = @{
-            "Name" = "MACHINE_CHECK_EXCEPTION"
-            "Description" = "Hardware reported a fatal error to the CPU, usually indicating CPU, memory or power issues."
-            "CommonCauses" = @(
+            "Name"            = "MACHINE_CHECK_EXCEPTION"
+            "Description"     = "Hardware reported a fatal error to the CPU, usually indicating CPU, memory or power issues."
+            "CommonCauses"    = @(
                 "Processor error (CPU failure)"
                 "Memory error (bad RAM)"
                 "Motherboard or power supply issues"
@@ -175,68 +179,68 @@ function Initialize-DriversDatabase {
     
     $driverData = @{
         "nvlddmkm.sys" = @{
-            "VendorName" = "NVIDIA Corporation"
-            "DriverType" = "Display Driver"
+            "VendorName"  = "NVIDIA Corporation"
+            "DriverType"  = "Display Driver"
             "KnownIssues" = @(
                 @{
-                    "VersionRange" = @("456.71", "460.89")
+                    "VersionRange"     = @("456.71", "460.89")
                     "IssueDescription" = "May cause SYSTEM_THREAD_EXCEPTION_NOT_HANDLED (0x7E) when entering sleep mode"
-                    "Resolution" = "Update to version 461.09 or later"
-                    "AffectedOS" = @("Windows 10", "Windows 11")
+                    "Resolution"       = "Update to version 461.09 or later"
+                    "AffectedOS"       = @("Windows 10", "Windows 11")
                 },
                 @{
-                    "VersionRange" = @("471.11", "471.41")
+                    "VersionRange"     = @("471.11", "471.41")
                     "IssueDescription" = "Can trigger VIDEO_TDR_FAILURE (0x116) with certain applications"
-                    "Resolution" = "Update to version 472.12 or later"
-                    "AffectedOS" = @("Windows 11")
+                    "Resolution"       = "Update to version 472.12 or later"
+                    "AffectedOS"       = @("Windows 11")
                 }
             )
         }
-        "iastor.sys" = @{
-            "VendorName" = "Intel Corporation"
-            "DriverType" = "Storage Controller Driver"
+        "iastor.sys"   = @{
+            "VendorName"  = "Intel Corporation"
+            "DriverType"  = "Storage Controller Driver"
             "KnownIssues" = @(
                 @{
-                    "VersionRange" = @("11.2.0.1006", "11.2.0.1032")
+                    "VersionRange"     = @("11.2.0.1006", "11.2.0.1032")
                     "IssueDescription" = "Can cause KERNEL_DATA_INPAGE_ERROR (0x7A) when using NVMe storage"
-                    "Resolution" = "Update to Intel Rapid Storage Technology version 11.2.0.1033 or later"
-                    "AffectedOS" = @("Windows 10", "Windows 11")
+                    "Resolution"       = "Update to Intel Rapid Storage Technology version 11.2.0.1033 or later"
+                    "AffectedOS"       = @("Windows 10", "Windows 11")
                 }
             )
         }
         "rtkvhd64.sys" = @{
-            "VendorName" = "Realtek Semiconductor Corp."
-            "DriverType" = "Audio Driver"
+            "VendorName"  = "Realtek Semiconductor Corp."
+            "DriverType"  = "Audio Driver"
             "KnownIssues" = @(
                 @{
-                    "VersionRange" = @("6.0.9107.1", "6.0.9107.5")
+                    "VersionRange"     = @("6.0.9107.1", "6.0.9107.5")
                     "IssueDescription" = "May cause DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1) on wake from sleep"
-                    "Resolution" = "Update to version 6.0.9107.6 or later"
-                    "AffectedOS" = @("Windows 11")
+                    "Resolution"       = "Update to version 6.0.9107.6 or later"
+                    "AffectedOS"       = @("Windows 11")
                 }
             )
         }
         "atikmpag.sys" = @{
-            "VendorName" = "AMD Inc."
-            "DriverType" = "Display Driver"
+            "VendorName"  = "AMD Inc."
+            "DriverType"  = "Display Driver"
             "KnownIssues" = @(
                 @{
-                    "VersionRange" = @("27.20.21001.14001", "27.20.21003.8013")
+                    "VersionRange"     = @("27.20.21001.14001", "27.20.21003.8013")
                     "IssueDescription" = "Can trigger VIDEO_TDR_FAILURE (0x116) with power state transitions"
-                    "Resolution" = "Update to Adrenalin version 21.3.1 or later"
-                    "AffectedOS" = @("Windows 10", "Windows 11")
+                    "Resolution"       = "Update to Adrenalin version 21.3.1 or later"
+                    "AffectedOS"       = @("Windows 10", "Windows 11")
                 }
             )
         }
         "asmtxhci.sys" = @{
-            "VendorName" = "ASMedia Technology Inc."
-            "DriverType" = "USB Controller Driver"
+            "VendorName"  = "ASMedia Technology Inc."
+            "DriverType"  = "USB Controller Driver"
             "KnownIssues" = @(
                 @{
-                    "VersionRange" = @("1.16.51.1", "1.16.55.1")
+                    "VersionRange"     = @("1.16.51.1", "1.16.55.1")
                     "IssueDescription" = "Can cause SYSTEM_SERVICE_EXCEPTION (0x3B) when transferring large files"
-                    "Resolution" = "Update to version 1.16.56.1 or later or use Microsoft inbox driver"
-                    "AffectedOS" = @("Windows 10", "Windows 11")
+                    "Resolution"       = "Update to version 1.16.56.1 or later or use Microsoft inbox driver"
+                    "AffectedOS"       = @("Windows 10", "Windows 11")
                 }
             )
         }
@@ -262,8 +266,8 @@ function Get-LatestCrashDump {
     }
     
     $latestDump = Get-ChildItem -Path $DumpDirectory -Filter "*.dmp" | 
-                  Sort-Object -Property LastWriteTime -Descending | 
-                  Select-Object -First 1
+    Sort-Object -Property LastWriteTime -Descending | 
+    Select-Object -First 1
     
     if ($null -eq $latestDump) {
         Write-Warning "No crash dump files found in: $DumpDirectory"
@@ -285,15 +289,15 @@ function Get-CrashDumpMetadata {
     Write-Host "Extracting metadata from crash dump: $DumpFile" -ForegroundColor Cyan
     
     if (-not $global:DebuggerAvailable) {
-        Write-Warning "Windows Debugger not available. Limited metadata extraction only."
+        Write-Warning "DumpChk not available. Limited metadata extraction only."
         
         $metadata = @{
-            "DumpFile" = $DumpFile
-            "FileName" = (Split-Path -Path $DumpFile -Leaf)
-            "CreationTime" = (Get-Item -Path $DumpFile).LastWriteTime
-            "FileSize" = (Get-Item -Path $DumpFile).Length
-            "BugcheckCode" = "Unknown (debugger not available)"
-            "BugcheckName" = "Unknown (debugger not available)"
+            "DumpFile"       = $DumpFile
+            "FileName"       = (Split-Path -Path $DumpFile -Leaf)
+            "CreationTime"   = (Get-Item -Path $DumpFile).LastWriteTime
+            "FileSize"       = (Get-Item -Path $DumpFile).Length
+            "BugcheckCode"   = "Unknown (debugger not available)"
+            "BugcheckName"   = "Unknown (debugger not available)"
             "CrashedDrivers" = @()
         }
         
@@ -305,76 +309,58 @@ function Get-CrashDumpMetadata {
         return $metadata
     }
     
-    # Create a temporary file for debugger commands
-    $debugCmdsFile = [System.IO.Path]::GetTempFileName()
-    $analyzeCmds = @(
-        ".symfix"
-        ".reload"
-        "!analyze -v"
-        "lm t n"
-        "!for_each_module .echo @#ModuleName @#Base @#End @#ImageSize @#LoadedImageName @#ImageName"
-        "q"
-    )
-    
-    $analyzeCmds | Out-File -FilePath $debugCmdsFile -Encoding ascii
-    
-    Write-Host "Running debugger commands... $debugCmdsFile" -ForegroundColor Cyan   
-    # Run the debugger commands
-    $debugOutput = & $global:DebuggerPath -z $DumpFile -c "`"$$<$debugCmdsFile`""
-    Remove-Item -Path $debugCmdsFile -Force
+    # Run dumpchk with verbose option to get maximum information
+    Write-Host "Running DumpChk to analyze crash dump..." -ForegroundColor Cyan
+    $dumpchkOutput = & $global:DumpChkPath -v $DumpFile
     
     # Extract bugcheck information
     $bugcheckCode = "Unknown"
     $bugcheckName = "Unknown"
     $crashedDrivers = @()
     
-    foreach ($line in $debugOutput) {
-        # Extract bugcheck code and name
-        if ($line -match "BUGCHECK_CODE:\s+([0-9a-fA-F]+)") {
+    foreach ($line in $dumpchkOutput) {
+        # Extract bugcheck code
+        if ($line -match "BUGCHECK_CODE\s*:\s*([0-9a-fA-F]+)") {
             $bugcheckCode = "0x" + $Matches[1]
         }
-        elseif ($line -match "BUGCHECK_STR:\s+(.+)") {
-            $bugcheckName = $Matches[1].Trim()
-        }
-        
-        # Look for probable causes
-        if ($line -match "Probably caused by\s*:\s*(.+)") {
-            $probableCause = $Matches[1].Trim()
-            
-            # Extract driver names (typical format is "driver_name.sys")
-            if ($probableCause -match "(\w+\.sys)") {
+        # Extract any potential module names
+        elseif ($line -match "MODULE_NAME:\s+(\w+)") {
+            if ($Matches[1].EndsWith(".sys", [StringComparison]::OrdinalIgnoreCase)) {
                 $crashedDrivers += $Matches[1]
             }
         }
-        
-        # Alternate method to find faulty drivers - look for modules flagged in analyze output
-        if ($line -match "IMAGE_NAME:\s+(\w+\.sys)") {
-            $driverName = $Matches[1]
-            
-            # Check next few lines for fault indications
-            $nextIndex = $debugOutput.IndexOf($line) + 1
-            $checkLines = 10  # Check next 10 lines
-            
-            for ($i = $nextIndex; $i -lt ($nextIndex + $checkLines) -and $i -lt $debugOutput.Count; $i++) {
-                if ($debugOutput[$i] -match "FAULTING_MODULE") {
-                    $crashedDrivers += $driverName
-                    break
-                }
-            }
+        # Try to find image names (drivers) that might be implicated
+        elseif ($line -match "IMAGE_NAME:\s+(\w+\.sys)") {
+            $crashedDrivers += $Matches[1]
+        }
+        # Look for any failure bucket ID related to specific modules
+        elseif ($line -match "FAILURE_BUCKET_ID:.*?(\w+\.sys)") {
+            $crashedDrivers += $Matches[1]
+        }
+        # Look for process names that might be system drivers
+        elseif ($line -match "PROCESS_NAME:\s+(\w+\.sys)") {
+            $crashedDrivers += $Matches[1]
         }
     }
     
     # Remove duplicates from crashed drivers list
     $crashedDrivers = $crashedDrivers | Select-Object -Unique
     
+    # Create metadata structure
     $metadata = @{
-        "DumpFile" = $DumpFile
-        "FileName" = (Split-Path -Path $DumpFile -Leaf)
-        "CreationTime" = (Get-Item -Path $DumpFile).LastWriteTime
-        "FileSize" = (Get-Item -Path $DumpFile).Length
-        "BugcheckCode" = $bugcheckCode
-        "BugcheckName" = $bugcheckName
+        "DumpFile"       = $DumpFile
+        "FileName"       = (Split-Path -Path $DumpFile -Leaf)
+        "CreationTime"   = (Get-Item -Path $DumpFile).LastWriteTime
+        "FileSize"       = (Get-Item -Path $DumpFile).Length
+        "BugcheckCode"   = $bugcheckCode
+        "BugcheckName"   = $bugcheckName
         "CrashedDrivers" = $crashedDrivers
+    }
+    
+    # If we couldn't extract the bugcheck name from dumpchk, 
+    # we'll try to get it from our knowledge base
+    if ($bugcheckCode -ne "Unknown" -and $global:BugcheckKB.PSObject.Properties.Name -contains $bugcheckCode) {
+        $metadata.BugcheckName = $global:BugcheckKB.$bugcheckCode.Name
     }
     
     return $metadata
@@ -393,12 +379,13 @@ function Find-ProblemDrivers {
     # Get all currently loaded drivers
     Write-Host "Scanning system for currently loaded drivers..." -ForegroundColor Cyan
     $loadedDrivers = Get-WmiObject -Class Win32_SystemDriver | 
-                    Where-Object { $_.State -eq "Running" } | 
-                    Select-Object Name, DisplayName, PathName, Description
+    Where-Object { $_.State -eq "Running" } | 
+    Select-Object Name, DisplayName, PathName, Description
     
     $driverResults = @()
     
     # First, check the crashed drivers identified in the dump
+    # DumpChk might have identified fewer drivers, but we work with what we have
     foreach ($driver in $CrashMetadata.CrashedDrivers) {
         Write-Host "Analyzing identified problematic driver: $driver" -ForegroundColor Yellow
         
@@ -418,12 +405,12 @@ function Find-ProblemDrivers {
             }
             
             $result = @{
-                "DriverName" = $driver
-                "VendorName" = $knownIssues.VendorName
-                "DriverType" = $knownIssues.DriverType
+                "DriverName"     = $driver
+                "VendorName"     = $knownIssues.VendorName
+                "DriverType"     = $knownIssues.DriverType
                 "CurrentVersion" = $driverVersion
-                "IsInstalled" = ($null -ne $driverInfo)
-                "KnownIssues" = @()
+                "IsInstalled"    = ($null -ne $driverInfo)
+                "KnownIssues"    = @()
             }
             
             # Check each known issue for version match
@@ -441,11 +428,11 @@ function Find-ProblemDrivers {
                     $isOSAffected = $issue.AffectedOS -contains $osVersion -or $issue.AffectedOS -contains "Windows 11"
                     
                     $matchResult = @{
-                        "IssueDescription" = $issue.IssueDescription
-                        "VersionRange" = $issue.VersionRange -join " to "
+                        "IssueDescription"       = $issue.IssueDescription
+                        "VersionRange"           = $issue.VersionRange -join " to "
                         "CurrentVersionAffected" = $isAffected
-                        "OSAffected" = $isOSAffected
-                        "Resolution" = $issue.Resolution
+                        "OSAffected"             = $isOSAffected
+                        "Resolution"             = $issue.Resolution
                     }
                     
                     $result.KnownIssues += $matchResult
@@ -453,10 +440,10 @@ function Find-ProblemDrivers {
                 catch {
                     # Version parsing failed
                     $result.KnownIssues += @{
-                        "IssueDescription" = $issue.IssueDescription
-                        "VersionRange" = $issue.VersionRange -join " to "
+                        "IssueDescription"       = $issue.IssueDescription
+                        "VersionRange"           = $issue.VersionRange -join " to "
                         "CurrentVersionAffected" = "Unknown (version comparison failed)"
-                        "Resolution" = $issue.Resolution
+                        "Resolution"             = $issue.Resolution
                     }
                 }
             }
@@ -468,12 +455,12 @@ function Find-ProblemDrivers {
             $driverInfo = $loadedDrivers | Where-Object { $_.Name -eq ($driver -replace '\.sys$', '') -or $_.PathName -like "*\$driver" }
             
             $result = @{
-                "DriverName" = $driver
-                "VendorName" = "Unknown"
-                "DriverType" = "Unknown"
+                "DriverName"     = $driver
+                "VendorName"     = "Unknown"
+                "DriverType"     = "Unknown"
                 "CurrentVersion" = "Unknown"
-                "IsInstalled" = ($null -ne $driverInfo)
-                "KnownIssues" = @()
+                "IsInstalled"    = ($null -ne $driverInfo)
+                "KnownIssues"    = @()
             }
             
             if ($null -ne $driverInfo) {
@@ -489,7 +476,9 @@ function Find-ProblemDrivers {
         }
     }
     
-    # Also scan all loaded drivers against the known bad database
+    # As dumpchk may not identify all problematic drivers, do a more thorough scan
+    # Get all loaded modules that might be related to the bugcheck code
+    # We scan all loaded drivers against the known bad database
     Write-Host "Scanning all loaded drivers for potential issues..." -ForegroundColor Cyan
     
     foreach ($driver in $loadedDrivers) {
@@ -513,13 +502,13 @@ function Find-ProblemDrivers {
             }
             
             $result = @{
-                "DriverName" = $driverFileName
-                "VendorName" = $knownIssues.VendorName
-                "DriverType" = $knownIssues.DriverType
-                "CurrentVersion" = $driverVersion
-                "IsInstalled" = $true
+                "DriverName"        = $driverFileName
+                "VendorName"        = $knownIssues.VendorName
+                "DriverType"        = $knownIssues.DriverType
+                "CurrentVersion"    = $driverVersion
+                "IsInstalled"       = $true
                 "IdentifiedInCrash" = $false
-                "KnownIssues" = @()
+                "KnownIssues"       = @()
             }
             
             # Check each known issue for version match
@@ -537,11 +526,11 @@ function Find-ProblemDrivers {
                     $isOSAffected = $issue.AffectedOS -contains $osVersion -or $issue.AffectedOS -contains "Windows 11"
                     
                     $matchResult = @{
-                        "IssueDescription" = $issue.IssueDescription
-                        "VersionRange" = $issue.VersionRange -join " to "
+                        "IssueDescription"       = $issue.IssueDescription
+                        "VersionRange"           = $issue.VersionRange -join " to "
                         "CurrentVersionAffected" = $isAffected
-                        "OSAffected" = $isOSAffected
-                        "Resolution" = $issue.Resolution
+                        "OSAffected"             = $isOSAffected
+                        "Resolution"             = $issue.Resolution
                     }
                     
                     $result.KnownIssues += $matchResult
@@ -549,15 +538,67 @@ function Find-ProblemDrivers {
                 catch {
                     # Version parsing failed
                     $result.KnownIssues += @{
-                        "IssueDescription" = $issue.IssueDescription
-                        "VersionRange" = $issue.VersionRange -join " to "
+                        "IssueDescription"       = $issue.IssueDescription
+                        "VersionRange"           = $issue.VersionRange -join " to "
                         "CurrentVersionAffected" = "Unknown (version comparison failed)"
-                        "Resolution" = $issue.Resolution
+                        "Resolution"             = $issue.Resolution
                     }
                 }
             }
             
             $driverResults += $result
+        }
+    }
+    
+    # For bugcheck codes related to specific driver types, add additional warnings
+    # This is especially useful with dumpchk which may not identify all problematic drivers
+    if ($CrashMetadata.BugcheckCode -ne "Unknown") {
+        # For VIDEO_TDR_FAILURE, add warnings for graphics drivers
+        if ($CrashMetadata.BugcheckCode -eq "0x00000116" -or $CrashMetadata.BugcheckName -eq "VIDEO_TDR_FAILURE") {
+            Write-Host "Bugcheck indicates graphics driver issue, checking all graphics drivers..." -ForegroundColor Yellow
+            
+            # Check for common graphics drivers that might not have been identified
+            $graphicsDrivers = $loadedDrivers | Where-Object { 
+                $_.PathName -like "*nvlddmkm.sys" -or 
+                $_.PathName -like "*atikmpag.sys" -or 
+                $_.PathName -like "*igdkmd64.sys" -or
+                $_.PathName -like "*amdkmdag.sys"
+            }
+            
+            foreach ($gfxDriver in $graphicsDrivers) {
+                $driverFileName = Split-Path -Path $gfxDriver.PathName -Leaf
+                
+                # Skip if already analyzed
+                if ($driverResults.DriverName -contains $driverFileName) {
+                    continue
+                }
+                
+                $driverVersion = "Unknown"
+                if (Test-Path $gfxDriver.PathName) {
+                    $driverVersion = (Get-Item $gfxDriver.PathName).VersionInfo.FileVersion
+                }
+                
+                $result = @{
+                    "DriverName"        = $driverFileName
+                    "VendorName"        = if ($gfxDriver.Description) { $gfxDriver.Description } else { "Unknown Graphics Driver" }
+                    "DriverType"        = "Graphics Driver"
+                    "CurrentVersion"    = $driverVersion
+                    "IsInstalled"       = $true
+                    "IdentifiedInCrash" = $false
+                    "RelatedToBugcheck" = $true
+                    "KnownIssues"       = @(
+                        @{
+                            "IssueDescription"       = "Possible cause of VIDEO_TDR_FAILURE bugcheck"
+                            "VersionRange"           = "All Versions"
+                            "CurrentVersionAffected" = "Unknown"
+                            "OSAffected"             = $true
+                            "Resolution"             = "Update to the latest graphics driver version from manufacturer website"
+                        }
+                    )
+                }
+                
+                $driverResults += $result
+            }
         }
     }
     
@@ -576,31 +617,89 @@ function Get-BugcheckAnalysis {
     
     $bugcheckCode = $CrashMetadata.BugcheckCode
     
-    if ($global:BugcheckKB.PSObject.Properties.Name -contains $bugcheckCode) {
-        $bugcheckInfo = $global:BugcheckKB.$bugcheckCode
+    # When using dumpchk, we might get a different format bugcheck code
+    # Make sure we have the 0x format for consistency
+    if ($bugcheckCode -ne "Unknown" -and -not $bugcheckCode.StartsWith("0x")) {
+        $bugcheckCode = "0x" + $bugcheckCode
+    }
+    
+    # Extract just the digits if the code starts with 0x
+    $lookupCode = $bugcheckCode
+    if ($bugcheckCode -match "0x([0-9A-Fa-f]+)") {
+        $lookupCode = "0x" + $Matches[1]
+    }
+    
+    if ($global:BugcheckKB.PSObject.Properties.Name -contains $lookupCode) {
+        $bugcheckInfo = $global:BugcheckKB.$lookupCode
         
         $analysis = @{
-            "BugcheckCode" = $bugcheckCode
-            "BugcheckName" = $bugcheckInfo.Name
-            "Description" = $bugcheckInfo.Description
-            "CommonCauses" = $bugcheckInfo.CommonCauses
+            "BugcheckCode"    = $bugcheckCode
+            "BugcheckName"    = $bugcheckInfo.Name
+            "Description"     = $bugcheckInfo.Description
+            "CommonCauses"    = $bugcheckInfo.CommonCauses
             "Recommendations" = $bugcheckInfo.Recommendations
         }
     } 
     else {
         Write-Warning "Bugcheck code $bugcheckCode not found in knowledge base."
         
+        # Try to get name from the metadata if available
+        $bugcheckName = $CrashMetadata.BugcheckName
+        if ($bugcheckName -eq "Unknown" -and $bugcheckCode -ne "Unknown") {
+            # Try looking up common bugcheck codes online or from a local resource
+            $commonBugchecks = @{
+                "0x0000001E" = "KMODE_EXCEPTION_NOT_HANDLED"
+                "0x0000007E" = "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED"
+                "0x00000050" = "PAGE_FAULT_IN_NONPAGED_AREA"
+                "0x00000116" = "VIDEO_TDR_FAILURE"
+                "0x0000009C" = "MACHINE_CHECK_EXCEPTION"
+                "0x0000000A" = "IRQL_NOT_LESS_OR_EQUAL"
+                "0x000000D1" = "DRIVER_IRQL_NOT_LESS_OR_EQUAL"
+                "0x000000C5" = "DRIVER_CORRUPTED_EXPOOL"
+                "0x0000007A" = "KERNEL_DATA_INPAGE_ERROR"
+                "0x000000F4" = "CRITICAL_OBJECT_TERMINATION"
+            }
+            
+            if ($commonBugchecks.ContainsKey($lookupCode)) {
+                $bugcheckName = $commonBugchecks[$lookupCode]
+            }
+        }
+        
         $analysis = @{
-            "BugcheckCode" = $bugcheckCode
-            "BugcheckName" = $CrashMetadata.BugcheckName
-            "Description" = "No detailed information available in knowledge base."
-            "CommonCauses" = @("Unknown - not in knowledge base")
+            "BugcheckCode"    = $bugcheckCode
+            "BugcheckName"    = $bugcheckName
+            "Description"     = "No detailed information available in knowledge base."
+            "CommonCauses"    = @("Unknown - not in knowledge base")
             "Recommendations" = @(
                 "Search for the bugcheck code online"
                 "Check Windows Event Logs for related errors"
                 "Run system file integrity check (SFC /scannow)"
                 "Check for Windows updates"
             )
+        }
+        
+        # Add specific recommendations based on bugcheck code patterns
+        if ($bugcheckCode -ne "Unknown") {
+            switch -Regex ($bugcheckCode) {
+                "0x0000001E|0x0000007E" {
+                    $analysis.CommonCauses += "Likely a driver issue"
+                    $analysis.Recommendations += "Update all device drivers, especially recently installed ones"
+                }
+                "0x00000050|0x0000000A|0x000000D1" {
+                    $analysis.CommonCauses += "Possible memory or driver issue"
+                    $analysis.Recommendations += "Run Windows Memory Diagnostic"
+                }
+                "0x00000116" {
+                    $analysis.CommonCauses += "Graphics driver issue"
+                    $analysis.Recommendations += "Update graphics drivers from manufacturer website"
+                    $analysis.Recommendations += "Check for overheating GPU"
+                }
+                "0x0000009C" {
+                    $analysis.CommonCauses += "Hardware issue, possibly CPU or memory"
+                    $analysis.Recommendations += "Check system temperatures"
+                    $analysis.Recommendations += "Run hardware diagnostics"
+                }
+            }
         }
     }
     
@@ -754,26 +853,26 @@ function New-AnalysisReport {
             <ul>
 "@
 
-foreach ($cause in $BugcheckAnalysis.CommonCauses) {
-    $htmlReport += @"
+    foreach ($cause in $BugcheckAnalysis.CommonCauses) {
+        $htmlReport += @"
                 <li>$cause</li>
 "@
-}
+    }
 
-$htmlReport += @"
+    $htmlReport += @"
             </ul>
             
             <h4>Recommendations</h4>
             <ul>
 "@
 
-foreach ($recommendation in $BugcheckAnalysis.Recommendations) {
-    $htmlReport += @"
+    foreach ($recommendation in $BugcheckAnalysis.Recommendations) {
+        $htmlReport += @"
                 <li>$recommendation</li>
 "@
-}
+    }
 
-$htmlReport += @"
+    $htmlReport += @"
             </ul>
         </div>
         
@@ -781,21 +880,21 @@ $htmlReport += @"
             <h2>Driver Analysis</h2>
 "@
 
-$criticalDriversFound = $false
-foreach ($driver in $DriverAnalysis) {
-    $hasCriticalIssue = $false
-    foreach ($issue in $driver.KnownIssues) {
-        if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) {
-            $hasCriticalIssue = $true
-            $criticalDriversFound = $true
-            break
+    $criticalDriversFound = $false
+    foreach ($driver in $DriverAnalysis) {
+        $hasCriticalIssue = $false
+        foreach ($issue in $driver.KnownIssues) {
+            if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) {
+                $hasCriticalIssue = $true
+                $criticalDriversFound = $true
+                break
+            }
         }
-    }
     
-    $statusClass = if ($hasCriticalIssue) { "critical" } else { "" }
-    $identifiedInCrash = if ($CrashMetadata.CrashedDrivers -contains $driver.DriverName) { "Yes (identified in crash dump)" } else { "No" }
+        $statusClass = if ($hasCriticalIssue) { "critical" } else { "" }
+        $identifiedInCrash = if ($CrashMetadata.CrashedDrivers -contains $driver.DriverName) { "Yes (identified in crash dump)" } else { "No" }
     
-    $htmlReport += @"
+        $htmlReport += @"
             <div class="section $statusClass">
                 <h3>Driver: $($driver.DriverName)</h3>
                 <table>
@@ -826,8 +925,8 @@ foreach ($driver in $DriverAnalysis) {
                 </table>
 "@
 
-    if ($driver.KnownIssues.Count -gt 0) {
-        $htmlReport += @"
+        if ($driver.KnownIssues.Count -gt 0) {
+            $htmlReport += @"
                 <h4>Known Issues</h4>
                 <table>
                     <tr>
@@ -838,10 +937,10 @@ foreach ($driver in $DriverAnalysis) {
                     </tr>
 "@
         
-        foreach ($issue in $driver.KnownIssues) {
-            $issueClass = if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) { "critical" } elseif ($issue.CurrentVersionAffected -eq $true) { "warning" } else { "" }
+            foreach ($issue in $driver.KnownIssues) {
+                $issueClass = if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) { "critical" } elseif ($issue.CurrentVersionAffected -eq $true) { "warning" } else { "" }
             
-            $htmlReport += @"
+                $htmlReport += @"
                     <tr class="$issueClass">
                         <td>$($issue.IssueDescription)</td>
                         <td>$($issue.VersionRange)</td>
@@ -849,53 +948,53 @@ foreach ($driver in $DriverAnalysis) {
                         <td>$($issue.Resolution)</td>
                     </tr>
 "@
-        }
+            }
         
-        $htmlReport += @"
+            $htmlReport += @"
                 </table>
 "@
-    }
-    else {
-        $htmlReport += @"
+        }
+        else {
+            $htmlReport += @"
                 <p>No known issues found for this driver in the database.</p>
 "@
-    }
+        }
     
-    $htmlReport += @"
+        $htmlReport += @"
             </div>
 "@
-}
+    }
 
-if (-not $criticalDriversFound) {
-    $htmlReport += @"
+    if (-not $criticalDriversFound) {
+        $htmlReport += @"
             <div class="success">
                 <p>No critical driver issues were found that match the specific BSOD pattern. Consider checking the recommendations for the bugcheck code.</p>
             </div>
 "@
-}
+    }
 
-$htmlReport += @"
+    $htmlReport += @"
         </div>
         
         <div class="section">
             <h2>System Event Log Analysis</h2>
 "@
 
-# Get relevant system events around the crash time
-$crashTime = $CrashMetadata.CreationTime
-$eventTimeStart = $crashTime.AddMinutes(-30)
-$eventTimeEnd = $crashTime.AddMinutes(5)
+    # Get relevant system events around the crash time
+    $crashTime = $CrashMetadata.CreationTime
+    $eventTimeStart = $crashTime.AddMinutes(-30)
+    $eventTimeEnd = $crashTime.AddMinutes(5)
 
-$relevantEvents = Get-WinEvent -FilterHashtable @{
-    LogName = 'System'
-    Level = 1,2,3  # Error, Warning, Information
-    StartTime = $eventTimeStart
-    EndTime = $eventTimeEnd
-} -MaxEvents 50 -ErrorAction SilentlyContinue | 
-Select-Object TimeCreated, Id, LevelDisplayName, Message, ProviderName
+    $relevantEvents = Get-WinEvent -FilterHashtable @{
+        LogName   = 'System'
+        Level     = 1, 2, 3  # Error, Warning, Information
+        StartTime = $eventTimeStart
+        EndTime   = $eventTimeEnd
+    } -MaxEvents 50 -ErrorAction SilentlyContinue | 
+    Select-Object TimeCreated, Id, LevelDisplayName, Message, ProviderName
 
-if ($relevantEvents -and $relevantEvents.Count -gt 0) {
-    $htmlReport += @"
+    if ($relevantEvents -and $relevantEvents.Count -gt 0) {
+        $htmlReport += @"
             <p>Found $(($relevantEvents | Measure-Object).Count) relevant events in the System Event Log around the time of the crash.</p>
             <table>
                 <tr>
@@ -907,20 +1006,20 @@ if ($relevantEvents -and $relevantEvents.Count -gt 0) {
                 </tr>
 "@
     
-    foreach ($event in $relevantEvents) {
-        $levelClass = switch ($event.LevelDisplayName) {
-            "Error" { "critical" }
-            "Warning" { "warning" }
-            default { "" }
-        }
+        foreach ($event in $relevantEvents) {
+            $levelClass = switch ($event.LevelDisplayName) {
+                "Error" { "critical" }
+                "Warning" { "warning" }
+                default { "" }
+            }
         
-        # Truncate very long messages
-        $message = $event.Message
-        if ($message.Length -gt 200) {
-            $message = $message.Substring(0, 200) + "..."
-        }
+            # Truncate very long messages
+            $message = $event.Message
+            if ($message.Length -gt 200) {
+                $message = $message.Substring(0, 200) + "..."
+            }
         
-        $htmlReport += @"
+            $htmlReport += @"
                 <tr class="$levelClass">
                     <td>$($event.TimeCreated)</td>
                     <td>$($event.Id)</td>
@@ -929,19 +1028,19 @@ if ($relevantEvents -and $relevantEvents.Count -gt 0) {
                     <td>$message</td>
                 </tr>
 "@
-    }
+        }
     
-    $htmlReport += @"
+        $htmlReport += @"
             </table>
 "@
-}
-else {
-    $htmlReport += @"
+    }
+    else {
+        $htmlReport += @"
             <p>No relevant System Event Log entries found around the time of the crash.</p>
 "@
-}
+    }
 
-$htmlReport += @"
+    $htmlReport += @"
         </div>
         
         <div class="section">
@@ -949,51 +1048,51 @@ $htmlReport += @"
             <ol>
 "@
 
-# Add dynamic recommendations based on analysis findings
-if ($criticalDriversFound) {
-    $htmlReport += @"
+    # Add dynamic recommendations based on analysis findings
+    if ($criticalDriversFound) {
+        $htmlReport += @"
                 <li class="critical">Update the following drivers identified with known issues:
                     <ul>
 "@
     
-    foreach ($driver in $DriverAnalysis) {
-        $hasCriticalIssue = $false
-        $resolutions = @()
+        foreach ($driver in $DriverAnalysis) {
+            $hasCriticalIssue = $false
+            $resolutions = @()
         
-        foreach ($issue in $driver.KnownIssues) {
-            if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) {
-                $hasCriticalIssue = $true
-                $resolutions += $issue.Resolution
+            foreach ($issue in $driver.KnownIssues) {
+                if ($issue.CurrentVersionAffected -eq $true -and $issue.OSAffected -eq $true) {
+                    $hasCriticalIssue = $true
+                    $resolutions += $issue.Resolution
+                }
             }
-        }
         
-        if ($hasCriticalIssue) {
-            $resolutionsText = ($resolutions | Select-Object -Unique) -join " or "
-            $htmlReport += @"
+            if ($hasCriticalIssue) {
+                $resolutionsText = ($resolutions | Select-Object -Unique) -join " or "
+                $htmlReport += @"
                         <li>$($driver.DriverName) ($($driver.VendorName)) - $resolutionsText</li>
 "@
+            }
         }
-    }
     
-    $htmlReport += @"
+        $htmlReport += @"
                     </ul>
                 </li>
 "@
-}
+    }
 
-# Add standard recommendations based on the bugcheck code
-$htmlReport += @"
+    # Add standard recommendations based on the bugcheck code
+    $htmlReport += @"
                 <li>Follow the specific recommendations for bugcheck $($BugcheckAnalysis.BugcheckCode):</li>
                 <ul>
 "@
 
-foreach ($recommendation in $BugcheckAnalysis.Recommendations) {
-    $htmlReport += @"
+    foreach ($recommendation in $BugcheckAnalysis.Recommendations) {
+        $htmlReport += @"
                     <li>$recommendation</li>
 "@
-}
+    }
 
-$htmlReport += @"
+    $htmlReport += @"
                 </ul>
                 <li>Run a full system hardware diagnostic to check for memory and disk issues.</li>
                 <li>Check system temperatures to ensure proper cooling.</li>
@@ -1034,23 +1133,23 @@ function Get-AnalysisData {
     
     # Create a structured data object
     $analysisData = @{
-        "GeneratedOn" = Get-Date
-        "SystemInfo" = @{
+        "GeneratedOn"      = Get-Date
+        "SystemInfo"       = @{
             "Manufacturer" = $systemInfo.Manufacturer
-            "Model" = $systemInfo.Model
-            "OSName" = $osInfo.Caption
-            "OSVersion" = $osInfo.Version
-            "OSBuild" = $osInfo.BuildNumber
+            "Model"        = $systemInfo.Model
+            "OSName"       = $osInfo.Caption
+            "OSVersion"    = $osInfo.Version
+            "OSBuild"      = $osInfo.BuildNumber
         }
-        "CrashInfo" = @{
-            "DumpFile" = $CrashMetadata.FileName
-            "CrashTime" = $CrashMetadata.CreationTime
+        "CrashInfo"        = @{
+            "DumpFile"     = $CrashMetadata.FileName
+            "CrashTime"    = $CrashMetadata.CreationTime
             "BugcheckCode" = $BugcheckAnalysis.BugcheckCode
             "BugcheckName" = $BugcheckAnalysis.BugcheckName
-            "Description" = $BugcheckAnalysis.Description
+            "Description"  = $BugcheckAnalysis.Description
         }
         "BugcheckAnalysis" = $BugcheckAnalysis
-        "DriverAnalysis" = $DriverAnalysis
+        "DriverAnalysis"   = $DriverAnalysis
     }
     
     return $analysisData
@@ -1101,6 +1200,20 @@ function Start-BSODAnalysis {
             return
         }
         $dumpFile = $TargetDumpFile
+    }
+    
+    # Validate the dump file using dumpchk first
+    if ($global:DebuggerAvailable) {
+        Write-Host "Validating crash dump file integrity..." -ForegroundColor Cyan
+        $validationOutput = & $global:DumpChkPath $dumpFile
+        
+        if ($validationOutput -join " " -match "DebugClient cannot open DumpFile|invalid file format|corrupt") {
+            Write-Error "The dump file appears to be corrupt or invalid. Analysis may be incomplete or inaccurate."
+            # We'll still try to proceed with limited analysis
+        }
+        else {
+            Write-Host "Dump file validation successful." -ForegroundColor Green
+        }
     }
     
     # Extract metadata from the crash dump
