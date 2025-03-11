@@ -44,6 +44,10 @@ Before using the tool, ensure you have:
 
 2. If you do not have Windows Debugging Tools installed, the script will still function but with reduced capabilities.
 
+## In Action
+
+![BluSkreener -- NotMyFault -- Html Report Output](image.jpg)
+
 ## Basic Usage
 
 ### Analyzing the Latest Crash Dump
