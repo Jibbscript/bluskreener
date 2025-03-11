@@ -318,6 +318,7 @@ function Get-CrashDumpMetadata {
     
     $analyzeCmds | Out-File -FilePath $debugCmdsFile -Encoding ascii
     
+    Write-Host "Running debugger commands... $debugCmdsFile" -ForegroundColor Cyan   
     # Run the debugger commands
     $debugOutput = & $global:DebuggerPath -z $DumpFile -c "`"$$<$debugCmdsFile`""
     Remove-Item -Path $debugCmdsFile -Force
