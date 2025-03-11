@@ -44,13 +44,13 @@ function Initialize-Environment {
         Write-Warning "Windows Debugging Tools not found. Some functionality may be limited."
         $global:DebuggerAvailable = $false
     } else {
-        $debuggerPath = Join-Path -Path $winDbgPath -ChildPath "kd.exe"
+        $debuggerPath = Join-Path -Path $winDbgPath -ChildPath "windbg.exe"
         if (Test-Path $debuggerPath) {
             $global:DebuggerPath = $debuggerPath
             $global:DebuggerAvailable = $true
             Write-Host "Windows Debugger found at: $debuggerPath" -ForegroundColor Green
         } else {
-            Write-Warning "Windows Debugger (kd.exe) not found at expected location. Some functionality may be limited."
+            Write-Warning "Windows Debugger (windbg.exe) not found at expected location. Some functionality may be limited."
             $global:DebuggerAvailable = $false
         }
     }
