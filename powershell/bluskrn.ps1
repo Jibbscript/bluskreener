@@ -38,13 +38,13 @@ function Initialize-Environment {
     }
     
     # Check if the Debugging Tools for Windows are installed
-    $winDbgPath = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Kits\Installed Roots" -Name "KitsRoot10" -ErrorAction SilentlyContinue
+    $winDbgPath = "C:\Program Files (x86)\Windows Kits\10\Debuggers\arm64" 
     
     if ($null -eq $winDbgPath) {
         Write-Warning "Windows Debugging Tools not found. Some functionality may be limited."
         $global:DebuggerAvailable = $false
     } else {
-        $debuggerPath = Join-Path -Path $winDbgPath.KitsRoot10 -ChildPath "Debuggers\x64\kd.exe"
+        $debuggerPath = Join-Path -Path $winDbgPath -ChildPath "kd.exe"
         if (Test-Path $debuggerPath) {
             $global:DebuggerPath = $debuggerPath
             $global:DebuggerAvailable = $true
