@@ -46,7 +46,7 @@ Before using the tool, ensure you have:
 
 ## In Action
 
-![BluSkreener -- NotMyFault -- Html Report Output](image.jpg)
+![BluSkreener -- NotMyFault -- Html Report Output](bluskreener-demo.jpg)
 
 ## Basic Usage
 
