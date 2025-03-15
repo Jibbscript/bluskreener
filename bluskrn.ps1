@@ -1,5 +1,5 @@
-# Windows BSOD Root Cause Triage Tool
-# Author: Principal Systems Development Engineer
+# BluSkreener
+# Author: Gibran Iqbal 
 # Description: A PowerShell script that analyzes crash dumps, identifies problematic drivers,
 #              and provides root cause analysis based on bugcheck codes.
 
