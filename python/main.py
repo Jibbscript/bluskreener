@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Windows BSOD Root Cause Triage Tool - Python Implementation
-# Author: Principal Systems Development Engineer
+# BluSkreener - Python Implementation
+# Author: Gibran Iqbal
 # Description: Python implementation for analyzing crash dumps and identifying
 #              problematic drivers based on a knowledge base of known issues.
 
